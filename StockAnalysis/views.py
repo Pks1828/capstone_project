@@ -3,10 +3,13 @@ from django.http import HttpResponse
 from .models import *
 import json
 from matplotlib.finance import candlestick2_ohlc
+from matplotlib.finance import candlestick_ohlc
 import matplotlib.pyplot as plt
 from io import StringIO, BytesIO
+import matplotlib.dates as mdates
 import base64
-
+from matplotlib.dates import date2num
+import matplotlib.ticker as mticker
 
 def index(request):
     context = {"title":"Home"}
@@ -56,20 +59,34 @@ def report(request):
         highp  = highp[max(0,len(dates)-50+1):len(dates)]
         lowp   = lowp[max(0,len(dates)-50+1):len(dates)]
         closep = closep[max(0,len(dates)-50+1):len(dates)]
-        fig, ax = plt.subplots()
-        candlestick2_ohlc(ax, openp, highp, lowp, closep, width=0.6)
-        # candlestick2_ohlc(ax, ohlc, width=0.6)
-        fig.autofmt_xdate()
-        fig.tight_layout()
-        format = "png"
-        sio = BytesIO()
-        plt.savefig(sio, format=format)
-        # context = {}
+        sio = make_chart("Equity", dates, openp, highp, lowp, closep)
         context = {"ohlc_image":base64.b64encode(sio.getvalue())}
         return render(request, "StockAnalysis/report.html", context)
 
 
-
-def make_chart():
+def make_chart(title, dates, openp, highp, lowp, closep):
     fig = plt.figure()
     ax1 = plt.subplot2grid((1,1), (0,0))
+    ohlc = []
+    for i in range(len(dates)):
+        ohlc.append((date2num(dates[i]), openp[i], highp[i], lowp[i], closep[i]))
+    # candlestick2_ohlc(ax1, openp, highp, lowp, closep, width=0.4, colorup='#77d879', colordown='#db3f3f')
+    print("DATES:"+str(dates[-1]))
+    candlestick_ohlc(ax1, ohlc, width=0.4, colorup='#77d879', colordown='#db3f3f')
+
+    for label in ax1.xaxis.get_ticklabels():
+        label.set_rotation(45)
+
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    ax1.xaxis.set_major_locator(mticker.MaxNLocator(10))
+    ax1.grid(True)
+
+
+    plt.xlabel('Date')
+    plt.ylabel('Price')
+    plt.title(title)
+    plt.legend()
+    plt.subplots_adjust(left=0.09, bottom=0.20, right=0.94, top=0.90, wspace=0.2, hspace=0)
+    sio = BytesIO()
+    plt.savefig(sio, format="png")
+    return sio

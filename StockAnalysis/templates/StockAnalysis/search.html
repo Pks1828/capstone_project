@@ -1,0 +1,68 @@
+{% extends "StockAnalysis/base.html" %}
+
+{% block head %}
+    <script>
+        $(document).ready(function(){
+            $("#select_index").change(function(){
+                if($(this).val()==""){
+                    $('#select_stock')
+                            .find('option')
+                            .remove()
+                            .end()
+                            .append("<option value=\"\">Select</option>")
+                            .val("");
+                    $("#select_stock").selectpicker("refresh");
+                }else{
+                    $.ajax({
+                        url: "/search_stocks/",
+                        type: "POST",
+                        data:{
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                            index_id: $("#select_index").val()
+                        },
+                        success:function(response){
+                            var stock_names = response.stock_names;
+                            $('#select_stock')
+                                    .find('option')
+                                    .remove()
+                                    .end();
+                            for(var i=0; i<stock_names.length; i++){
+                                $("#select_stock").append("<option value=\""+stock_names[i].id+"\">"+stock_names[i].sec_name+"</option>");
+                            }
+                            $("#select_stock").selectpicker("refresh");
+                        },
+                        error:function(response){
+                            alert("There was an error making the request!");
+                        },
+                        complete:function(){
+
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="/report/">
+        {% csrf_token %}
+        <Label> Select Index </Label>
+        <select class="form-control selectpicker" id="select_index" name="select_index">
+            <option value="">Select</option>
+            {% for index in indexes %}
+                <option value="{{ index.id }}">{{ index.index_name }}</option>
+            {% endfor %}
+        </select>
+        <br/>
+        <br/>
+        <Label> Select Stock </Label>
+        <select class="form-control selectpicker" id="select_stock" name="select_stock">
+            <option value="">Select</option>
+        </select>
+        <br/>
+        <br/>
+        <button type="submit" class="btn btn-primary">Get Report</button>
+    </form>
+
+{% endblock %}

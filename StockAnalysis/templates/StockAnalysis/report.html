@@ -1,0 +1,7 @@
+{% extends "StockAnalysis/base.html" %}
+{% block content %}
+    <a href="/search" class="btn btn-primary" onclick="">Back</a>
+    <br/>
+    <br/>
+    <img src="data:image/png;base64,{{ ohlc_image }}"/>
+{% endblock %}

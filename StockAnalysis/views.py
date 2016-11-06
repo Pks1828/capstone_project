@@ -10,6 +10,8 @@ import matplotlib.dates as mdates
 import base64
 from matplotlib.dates import date2num
 import matplotlib.ticker as mticker
+from .technical_indicators import TechnicalIndicators, TechnicalAnalysis
+from .stock_data import StockData
 
 def index(request):
     context = {"title":"Home"}
@@ -40,7 +42,7 @@ def report(request):
         return redirect("/search")
     else:
         stock_id = request.POST['select_stock']
-        ohlc_data = Ohlc.objects.filter(sec_id=stock_id).order_by("id")
+        ohlc_data = Ohlc.objects.all().filter(sec_id=stock_id).order_by("id")
         dates  = []
         openp  = []
         highp  = []
@@ -54,11 +56,15 @@ def report(request):
             lowp.append(d.low)
             closep.append(d.close)
             ohlc.append([d.date, d.open, d.high, d.low, d.close])
-        dates  = dates[max(0,len(dates)-50+1):len(dates)]
-        openp  = openp[max(0,len(dates)-50+1):len(dates)]
-        highp  = highp[max(0,len(dates)-50+1):len(dates)]
-        lowp   = lowp[max(0,len(dates)-50+1):len(dates)]
-        closep = closep[max(0,len(dates)-50+1):len(dates)]
+        stock_data = StockData(dates, openp, highp, lowp, closep)
+        technical_indicators = TechnicalIndicators(stock_data)
+        technical_indicators.calculate_with_defaults()
+        technical_analysis = TechnicalAnalysis(technical_indicators, stock_data)
+        dates  = dates[max(0,len(dates)-50):len(dates)]
+        openp  = openp[max(0,len(dates)-50):len(dates)]
+        highp  = highp[max(0,len(dates)-50):len(dates)]
+        lowp   = lowp[max(0,len(dates)-50):len(dates)]
+        closep = closep[max(0,len(dates)-50):len(dates)]
         sio = make_chart("Equity", dates, openp, highp, lowp, closep)
         context = {"ohlc_image":base64.b64encode(sio.getvalue())}
         return render(request, "StockAnalysis/report.html", context)
@@ -71,7 +77,6 @@ def make_chart(title, dates, openp, highp, lowp, closep):
     for i in range(len(dates)):
         ohlc.append((date2num(dates[i]), openp[i], highp[i], lowp[i], closep[i]))
     # candlestick2_ohlc(ax1, openp, highp, lowp, closep, width=0.4, colorup='#77d879', colordown='#db3f3f')
-    print("DATES:"+str(dates[-1]))
     candlestick_ohlc(ax1, ohlc, width=0.4, colorup='#77d879', colordown='#db3f3f')
 
     for label in ax1.xaxis.get_ticklabels():
@@ -80,7 +85,6 @@ def make_chart(title, dates, openp, highp, lowp, closep):
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     ax1.xaxis.set_major_locator(mticker.MaxNLocator(10))
     ax1.grid(True)
-
 
     plt.xlabel('Date')
     plt.ylabel('Price')

@@ -22,4 +22,4 @@ class StockData:
         self.high_price = high_price[max(self.len-200,0):self.len]
         self.low_price = low_price[max(self.len-200,0):self.len]
         self.close_price = close_price[max(self.len-200,0):self.len]
-
+        self.len = len(self.date_series)

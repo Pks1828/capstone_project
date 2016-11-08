@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 class TechnicalIndicators:
@@ -168,6 +169,86 @@ class TechnicalAnalysis:
         self.cci_signal = None
         self.williams_signal= None
         self.vortex_signal= None
+        self.weights = None
+
+    def get_all_signals(self):
+        self.get_sma_signal()
+        self.get_ema_signal()
+        self.get_bollinger_signal()
+        self.get_macd_signal()
+        self.get_rsi_signal()
+        self.get_stochastic_signal()
+        self.get_aroon_signal()
+        self.get_cci_signal()
+        self.get_williams_signal()
+        self.get_vortex_signal()
+
+    def calculate_weights(self):
+        sma_returns = self.get_returns(self.sma_signal)
+        ema_returns = self.get_returns(self.ema_signal)
+        bollinger_returns = self.get_returns(self.bollinger_signal)
+        macd_returns = self.get_returns(self.macd_signal)
+        rsi_returns = self.get_returns(self.rsi_signal)
+        stochastics_returns = self.get_returns(self.stochastic_signal)
+        aroon_returns = self.get_returns(self.aroon_signal)
+        cci_returns = self.get_returns(self.cci_signal)
+        williams_returns = self.get_returns(self.williams_signal)
+        vortex_returns = self.get_returns(self.vortex_signal)
+        self.weights = [sma_returns, ema_returns, bollinger_returns, macd_returns, rsi_returns, stochastics_returns, aroon_returns, cci_returns, williams_returns, vortex_returns]
+
+    def get_returns(self, signals_in):
+        returns = 0
+        signals = carryover(signals_in, -1)
+        i = 50
+        highp = self.stock_data.high_price
+        lowp = self.stock_data.low_price
+        closep = self.stock_data.close_price
+        while i<len(signals):
+            if signals[i]>0:
+                reco = 1
+                target = closep[i]+2*np.std(closep[i-50:i])*math.sqrt(10)
+                stoploss = max(closep[i]-2*np.std(closep[i-50:i])*math.sqrt(10),0)
+            else:
+                reco = -1
+                stoploss = closep[i]+2*np.std(closep[i-50:i])*math.sqrt(10)
+                target = max(closep[i]-2*np.std(closep[i-50:i])*math.sqrt(10),0)
+            reco_price = closep[i]
+            i+=1
+            count = 0
+            reco_made = False
+            while i<len(signals) and count<20 and signals[i]==reco:
+                if reco>0:
+                    if highp[i]>=target:
+                        returns += highp[i]-target
+                        reco_made = True
+                        break
+                    elif lowp[i]<=stoploss:
+                        returns += lowp[i]-stoploss
+                        reco_made = True
+                        break
+                else:
+                    if highp[i]>=stoploss:
+                        returns += stoploss-highp[i]
+                        reco_made = True
+                        break
+                    elif lowp[i]<=target:
+                        returns += target-lowp[i]
+                        reco_made = True
+                        break
+                count +=1
+                i+=1
+            if reco_made:
+                i+=1
+            else:
+                returns += closep[i-1] - reco_price
+        return returns
+
+
+    def give_recommendation(self):
+        score = 0
+        for i in range(len(self.weights)):
+            score += self.weights[i]*self.sma_signal[-1]
+        return "SELL" if score<0 else ("BUY" if score>0 else "NEUTRAL")
 
     def get_sma_signal(self):
         sma = self.technical_indicators.sma
@@ -180,7 +261,7 @@ class TechnicalAnalysis:
             elif closep[i-1]>sma[i-1] and closep[i]<=sma[i]:
                 signal = -1
             sma_signal.append(signal)
-        self.sma_signal = self.carryover(sma_signal,4)
+        self.sma_signal = carryover(sma_signal,4)
 
     def get_ema_signal(self):
         ema = self.technical_indicators.ema
@@ -193,7 +274,7 @@ class TechnicalAnalysis:
             elif closep[i-1]>ema[i-1] and closep[i]<=ema[i]:
                 signal = -1
             ema_signal.append(signal)
-        self.ema_signal = self.carryover(ema_signal,4)
+        self.ema_signal = carryover(ema_signal,4)
 
     def get_bollinger_signal(self):
         lower, upper = self.technical_indicators.bollinger
@@ -206,7 +287,7 @@ class TechnicalAnalysis:
             elif closep[i-1]>upper[i-1] and closep[i]<=upper[i]:
                 signal = -1
             bollinger_signal.append(signal)
-        self.bollinger_signal = self.carryover(bollinger_signal,4)
+        self.bollinger_signal = carryover(bollinger_signal,4)
 
     def get_macd_signal(self):
         macd, line, hist = self.technical_indicators.macd
@@ -218,7 +299,7 @@ class TechnicalAnalysis:
             elif hist[i-1]>0 and hist[i]<=0:
                 signal = -1
             macd_signal.append(signal)
-        self.macd_signal = self.carryover(macd_signal,4)
+        self.macd_signal = carryover(macd_signal,4)
 
     def get_rsi_signal(self):
         rsi = self.technical_indicators.rsi
@@ -230,7 +311,7 @@ class TechnicalAnalysis:
             elif rsi[i-1]>70 and rsi[i]<=70:
                 signal = -1
             rsi_signal.append(signal)
-        self.rsi_signal = self.carryover(rsi_signal,4)
+        self.rsi_signal = carryover(rsi_signal,4)
 
     def get_stochastic_signal(self):
         stochastic = self.technical_indicators.stochastic
@@ -242,7 +323,7 @@ class TechnicalAnalysis:
             elif stochastic[i-1]>70 and stochastic[i]<=70:
                 signal = -1
             stochastic_signal.append(signal)
-        self.stochastic_signal = self.carryover(stochastic_signal,4)
+        self.stochastic_signal = carryover(stochastic_signal,4)
 
     def get_aroon_signal(self):
         aroon = self.technical_indicators.aroon
@@ -254,7 +335,7 @@ class TechnicalAnalysis:
             elif aroon[i-1]>0 and aroon[i]<=0:
                 signal = -1
             aroon_signal.append(signal)
-        self.aroon_signal = self.carryover(aroon_signal,4)
+        self.aroon_signal = carryover(aroon_signal,4)
 
     def get_cci_signal(self):
         cci = self.technical_indicators.cci
@@ -266,7 +347,7 @@ class TechnicalAnalysis:
             elif cci[i-1]>100 and cci[i]<=100:
                 signal = -1
             cci_signal.append(signal)
-        self.cci_signal = self.carryover(cci_signal,4)
+        self.cci_signal = carryover(cci_signal,4)
 
     def get_williams_signal(self):
         williams = self.technical_indicators.williams
@@ -278,7 +359,7 @@ class TechnicalAnalysis:
             elif williams[i-1]>-20 and williams[i]<=-20:
                 signal = -1
             williams_signal.append(signal)
-        self.williams_signal = self.carryover(williams_signal,4)
+        self.williams_signal = carryover(williams_signal,4)
 
     def get_vortex_signal(self):
         vortex_p, vortex_m = self.technical_indicators.vortex
@@ -290,36 +371,24 @@ class TechnicalAnalysis:
             elif vortex_p[i-1]>vortex_m[i-1] and vortex_p[i]<=vortex_m[i]:
                 signal = -1
             vortex_signal.append(signal)
-        self.vortex_signal = self.carryover(vortex_signal,4)
+        self.vortex_signal = carryover(vortex_signal,4)
 
-
-
-    def get_signals(self):
-        pass
-
-    def calculate_weights(self):
-        pass
-
-    def get_returns(self):
-        pass
-
-    def give_recommendation(self):
-        pass
-
-    def carryover(self, signals_in, n=4):
-        i=0
-        signals = signals_in[:]
-        while i<len(signals):
-            if signals[i]!=0:
-                count = 0
-                i+=1
-                while i<len(signals) and signals[i]==0 and count<n:
-                    signals[i] = signals[i-1]
-                    count+=1
-                    i+=1
-                continue
+def carryover(signals_in, n=4):
+    i=0
+    signals = signals_in[:]
+    while i<len(signals):
+        if signals[i]!=0:
+            count = 0
             i+=1
-        return signals
+            while i<len(signals) and signals[i]==0:
+                if count>=n and n>=0:
+                    break
+                signals[i] = signals[i-1]
+                count+=1
+                i+=1
+            continue
+        i+=1
+    return signals
 
 
 def simple_moving_average_core(data_points, n):

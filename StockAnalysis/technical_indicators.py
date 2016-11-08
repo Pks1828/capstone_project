@@ -194,7 +194,12 @@ class TechnicalAnalysis:
         cci_returns = self.get_returns(self.cci_signal)
         williams_returns = self.get_returns(self.williams_signal)
         vortex_returns = self.get_returns(self.vortex_signal)
-        self.weights = [sma_returns, ema_returns, bollinger_returns, macd_returns, rsi_returns, stochastics_returns, aroon_returns, cci_returns, williams_returns, vortex_returns]
+        weights = [sma_returns, ema_returns, bollinger_returns, macd_returns, rsi_returns, stochastics_returns, aroon_returns, cci_returns, williams_returns, vortex_returns]
+        mean = np.mean(weights)
+        std = np.std(weights)
+        self.weights = []
+        for w in weights:
+            self.weights.append((w-mean)/(2.0*std)+1.0)
 
     def get_returns(self, signals_in):
         returns = 0

@@ -1,6 +1,6 @@
 import numpy as np
 import math
-
+import random
 
 class TechnicalIndicators:
 
@@ -19,7 +19,7 @@ class TechnicalIndicators:
         self.stochastic = None
         self.aroon = None
         self.cci = None
-        self.willams = None
+        self.williams = None
         self.vortex = None
 
     def calculate_with_defaults(self):
@@ -31,9 +31,8 @@ class TechnicalIndicators:
         self.stochastic = self.stochastic_oscillator()
         self.aroon = self.aroon_oscillator()
         self.cci = self.commodity_channel_index()
-        self.willams = self.williams_percentage_r()
+        self.williams = self.williams_percentage_r()
         self.vortex = self.vortex_osc()
-
 
     def simple_moving_average(self, num_days=10):
         '''
@@ -47,6 +46,8 @@ class TechnicalIndicators:
             raise ValueError("Number of days cannot be 0 or negative")
         close_price = self.stock_data.close_price
         sma = simple_moving_average_core(close_price, num_days)
+        # print (sma)
+        # print (close_price)
         return sma
 
     def exponential_moving_average(self, num_days=10):
@@ -60,7 +61,7 @@ class TechnicalIndicators:
         if num_days<=0:
             raise ValueError("Number of days cannot be 0 or negative")
         close_price = self.stock_data.close_price
-        running_sum = sum(close_price[0:num_days])*1.0
+        return exponential_moving_average_core(close_price, num_days)
 
     def bollinger_bands(self, n=20, sma=None):
         '''
@@ -155,6 +156,8 @@ class TechnicalIndicators:
         return vortex_p, vortex_m
 
 
+################################################## TECHNICAL ANALYSIS #################################
+
 class TechnicalAnalysis:
     def __init__(self,technical_indicators, stock_data):
         self.technical_indicators = technical_indicators
@@ -198,6 +201,7 @@ class TechnicalAnalysis:
         mean = np.mean(weights)
         std = np.std(weights)
         self.weights = []
+        # Normalizes the weights between 0 and number of indicators
         for w in weights:
             self.weights.append((w-mean)/(2.0*std)+1.0)
 
@@ -248,11 +252,41 @@ class TechnicalAnalysis:
                 returns += closep[i-1] - reco_price
         return returns
 
+    def get_indicators(self):
+        n = len(self.stock_data.date_series)
+        dates = self.stock_data.date_series[max(0,n-50):n]
+        sma = {"name": "Simple Moving Average", "signal":self.sma_signal[-1], "indicator":zip(dates,self.technical_indicators.sma[max(0,n-50):n]), "same_scale": True, "num_signals":1}
+        ema = {"name": "Exponential Moving Average", "signal":self.ema_signal[-1], "indicator":zip(dates,self.technical_indicators.ema[max(0,n-50):n]), "same_scale": True, "num_signals":1}
+        bollinger = {"name": "Bollinger Bands", "signal":self.bollinger_signal[-1], \
+                     "indicators":[{"name":"Bollinger Down","indicator":zip(dates,self.technical_indicators.bollinger[0][max(0,n-50):n])},\
+                                   {"name":"Bollinger Up","indicator":zip(dates,self.technical_indicators.bollinger[1][max(0,n-50):n])}], \
+                     "same_scale": True, "num_signals":2}
+        macd = {"name": "Moving Average Convergence Divergence", "signal":self.macd_signal[-1], "indicator":zip(dates,self.technical_indicators.macd[2][max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        rsi = {"name": "Relative Strength Index", "signal":self.rsi_signal[-1], "indicator":zip(dates,self.technical_indicators.rsi[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        stochastic = {"name": "Stochastic Oscillator", "signal":self.stochastic_signal[-1], "indicator":zip(dates,self.technical_indicators.stochastic[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        aroon = {"name": "Aroon Oscillator", "signal":self.aroon_signal[-1], "indicator":zip(dates,self.technical_indicators.aroon[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        cci = {"name": "Commodity Channel Index", "signal":self.cci_signal[-1], "indicator":zip(dates,self.technical_indicators.cci[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        williams = {"name": "Williams %R", "signal":self.williams_signal[-1], "indicator":zip(dates,self.technical_indicators.williams[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        vortex = {"name": "Vortex Oscillator", "signal":self.vortex_signal[-1], \
+                  "indicators":[{"name": "Vortex Up", "indicator":zip(dates,self.technical_indicators.vortex[0][max(0,n-50):n])},\
+                                {"name": "Vortex Down", "indicator":zip(dates,self.technical_indicators.vortex[1][max(0,n-50):n])}],\
+                  "same_scale": False, "num_signals":2}
+        result = [sma, ema, bollinger, macd, rsi, stochastic, aroon, cci, williams, vortex]
+        random.shuffle(result)
+        return result
 
     def give_recommendation(self):
         score = 0
-        for i in range(len(self.weights)):
-            score += self.weights[i]*self.sma_signal[-1]
+        score += self.weights[0]*self.sma_signal[-1]
+        score += self.weights[1]*self.ema_signal[-1]
+        score += self.weights[2]*self.bollinger_signal[-1]
+        score += self.weights[3]*self.macd_signal[-1]
+        score += self.weights[4]*self.rsi_signal[-1]
+        score += self.weights[5]*self.stochastic_signal[-1]
+        score += self.weights[6]*self.aroon_signal[-1]
+        score += self.weights[7]*self.cci_signal[-1]
+        score += self.weights[8]*self.williams_signal[-1]
+        score += self.weights[9]*self.vortex_signal[-1]
         return "SELL" if score<0 else ("BUY" if score>0 else "NEUTRAL")
 
     def get_sma_signal(self):
@@ -309,7 +343,7 @@ class TechnicalAnalysis:
     def get_rsi_signal(self):
         rsi = self.technical_indicators.rsi
         rsi_signal = [0]
-        for i in range(1, rsi):
+        for i in range(1, len(rsi)):
             signal = 0
             if rsi[i-1]<30 and rsi[i]>=30:
                 signal = 1
@@ -321,7 +355,7 @@ class TechnicalAnalysis:
     def get_stochastic_signal(self):
         stochastic = self.technical_indicators.stochastic
         stochastic_signal = [0]
-        for i in range(1, stochastic):
+        for i in range(1, len(stochastic)):
             signal = 0
             if stochastic[i-1]<30 and stochastic[i]>=30:
                 signal = 1
@@ -333,7 +367,7 @@ class TechnicalAnalysis:
     def get_aroon_signal(self):
         aroon = self.technical_indicators.aroon
         aroon_signal = [0]
-        for i in range(1, aroon):
+        for i in range(1, len(aroon)):
             signal = 0
             if aroon[i-1]<0 and aroon[i]>=0:
                 signal = 1
@@ -345,7 +379,7 @@ class TechnicalAnalysis:
     def get_cci_signal(self):
         cci = self.technical_indicators.cci
         cci_signal = [0]
-        for i in range(1, cci):
+        for i in range(1, len(cci)):
             signal = 0
             if cci[i-1]<-100 and cci[i]>=-100:
                 signal = 1
@@ -357,7 +391,7 @@ class TechnicalAnalysis:
     def get_williams_signal(self):
         williams = self.technical_indicators.williams
         williams_signal = [0]
-        for i in range(1, williams):
+        for i in range(1, len(williams)):
             signal = 0
             if williams[i-1]<-80 and williams[i]>=-80:
                 signal = 1
@@ -369,7 +403,7 @@ class TechnicalAnalysis:
     def get_vortex_signal(self):
         vortex_p, vortex_m = self.technical_indicators.vortex
         vortex_signal = [0]
-        for i in range(1, vortex_p):
+        for i in range(1, len(vortex_p)):
             signal = 0
             if vortex_p[i-1]<vortex_m[i-1] and vortex_p[i]>=vortex_m[i]:
                 signal = 1
@@ -377,6 +411,7 @@ class TechnicalAnalysis:
                 signal = -1
             vortex_signal.append(signal)
         self.vortex_signal = carryover(vortex_signal,4)
+
 
 def carryover(signals_in, n=4):
     i=0

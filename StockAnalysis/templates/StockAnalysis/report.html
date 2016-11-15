@@ -1,7 +1,314 @@
 {% extends "StockAnalysis/base.html" %}
+{% block head %}
+    {% load static %}
+{#    <script src="{% static 'js/canvasjs.min.js' %}"></script>#}
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+        var chart = new CanvasJS.Chart("plot",
+        {
+            title:{
+            },
+            exportEnabled: true,
+            axisY: {
+                includeZero:false,
+{#                prefix: "$",#}
+                title: "Prices",
+            },
+            axisX: {
+                interval:1,
+            },
+            toolTip: {
+                shared: true,
+            },
+            data: [
+            {
+                type: "candlestick",
+                showInLegend: true,
+                color: "green",
+                risingColor: "green",
+                name: "Rising",
+                dataPoints: [
+                    {% for date,prices in rising_sticks %}
+                        {% if forloop.counter == 1 %}
+{#                            {x: CanvasJS.formatDate(new Date("{{ date.isoformat }}"),"MMM DD"), y: {{prices|safe}}}#}
+                            {x: new Date("{{ date.isoformat }}"), y: {{prices|safe}}}
+                        {% else %}
+{#                            ,{x: CanvasJS.formatDate(new Date("{{ date.isoformat }}"),"MMM DD"), y:  {{prices|safe}}}#}
+                            ,{x: new Date("{{ date.isoformat }}"), y:  {{prices|safe}}}
+                        {% endif %}
+                    {% endfor %}
+                ]
+            },
+            {
+                type: "candlestick",
+                showInLegend: true,
+                color: "red",
+                risingColor: "red",
+                name: "Falling",
+                dataPoints: [
+                    {% for date,prices in falling_sticks %}
+                        {% if forloop.counter == 1 %}
+{#                            {x: CanvasJS.formatDate(new Date("{{ date.isoformat }}"),"MMM DD"), y: {{prices|safe}}}#}
+                            {x: new Date("{{ date.isoformat }}"), y: {{prices|safe}}}
+                        {% else %}
+{#                            ,{x: CanvasJS.formatDate(new Date("{{ date.isoformat }}"),"MMM DD"), y:  {{prices|safe}}}#}
+                            ,{x: new Date("{{ date.isoformat }}"), y:  {{prices|safe}}}
+                        {% endif %}
+                    {% endfor %}
+                ]
+            }
+                {% if recommendation == "BUY" %}
+                    {% for indicator in indicators %}
+                        {% if indicator.signal == 1 %}
+                            {% if indicator.same_scale %}
+                                {% if indicator.num_signals == 1 %}
+                                    ,{
+                                        type: "line",
+                                        markerSize: 5,
+                                        lineThickness: 2,
+                                        showInLegend: true,
+                                        name: "{{ indicator.name }}",
+                                        dataPoints: [
+                                            {% for date,val in indicator.indicator %}
+                                                {% if forloop.counter == 1 %}
+                                                    { x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% else %}
+                                                    ,{ x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                {% else %}
+                                    {% for indi in indicator.indicators %}
+                                    ,{
+                                        type: "line",
+                                        markerSize: 5,
+                                        lineThickness: 2,
+                                        name: "{{ indi.name }}",
+                                        showInLegend: true,
+                                        dataPoints: [
+                                            {% for date,val in  indi.indicator %}
+                                                {% if forloop.counter == 1 %}
+                                                    { x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% else %}
+                                                    ,{ x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% elif recommendation == "SELL" %}
+                    {% for indicator in indicators %}
+                        {% if indicator.signal == -1 %}
+                            {% if indicator.same_scale %}
+                                {% if indicator.num_signals == 1 %}
+                                    ,{
+                                        type: "line",
+                                        lineThickness: 2,
+                                        markerSize: 5,
+                                        name: "{{ indicator.name }}",
+                                        showInLegend: true,
+                                        color: "#F08080",
+                                        dataPoints: [
+                                            {% for date,val in  indicator.indicator %}
+                                                {% if forloop.counter == 1 %}
+                                                    { x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% else %}
+                                                    ,{ x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                {% else %}
+                                    {% for indi in indicator.indicators %}
+                                    ,{
+                                        type: "line",
+                                        markerSize: 5,
+                                        showInLegend: true,
+                                        lineThickness: 2,
+                                        name: "{{ indi.name }}",
+                                        dataPoints: [
+                                            {% for date,val in  indi.indicator %}
+                                                {% if forloop.counter == 1 %}
+                                                    { x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% else %}
+                                                    ,{ x: new Date("{{ date.isoformat }}"), y: {{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+
+                {% endif %}
+            ]
+        });
+        {% if recommendation == "BUY" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == 1 %}
+                    {% if not indicator.same_scale %}
+                        var chart{{ forloop.counter0 }} = new CanvasJS.Chart("plot{{ forloop.counter0 }}",{
+                            title:{
+                            },
+                            data:[
+                            {% if indicator.num_signals == 1 %}
+                                {
+                                    type: "line",
+                                    markerSize: 5,
+                                    showInLegend: true,
+                                    name: "{{ indicator.name }}",
+                                    dataPoints: [
+                                        {% for date,val in indicator.indicator %}
+                                            {% if forloop.counter0 == 0 %}
+                                                {x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                            {% else %}
+                                                ,{x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                            {% endif %}
+                                        {% endfor %}
+                                    ]
+                                }
+                            {% else %}
+                                {% for indi in indicator.indicators %}
+                                    {% if forloop.counter0 == 0 %}
+
+                                    {% else %}
+                                        ,
+                                    {% endif %}
+                                    {
+                                        type: "line",
+                                        markerSize: 5,
+                                        showInLegend: true,
+                                        name: "{{ indi.name }}",
+                                        dataPoints: [
+                                            {% for date,val in indi.indicator %}
+                                                {% if forloop.counter0 == 0 %}
+                                                    {x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                                {% else %}
+                                                    ,{x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                {% endfor %}
+                            {% endif %}
+                            ]
+                        });
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% elif recommendation == "SELL" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == -1 %}
+                    {% if not indicator.same_scale %}
+                        var chart{{ forloop.counter0 }} = new CanvasJS.Chart("plot{{ forloop.counter0 }}",{
+                            title:{
+                            },
+                            data:[
+                            {% if indicator.num_signals == 1 %}
+                                {
+                                    type: "line",
+                                    markerSize: 5,
+                                    showInLegend: true,
+                                    name: "{{ indicator.name }}",
+                                    dataPoints: [
+                                        {% for date,val in indicator.indicator %}
+                                            {% if forloop.counter0 == 0 %}
+                                                {x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                            {% else %}
+                                                ,{x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                            {% endif %}
+                                        {% endfor %}
+                                    ]
+                                }
+                            {% else %}
+                                {% for indi in indicator.indicators %}
+                                    {% if forloop.counter0 == 0 %}
+
+                                    {% else %}
+                                        ,
+                                    {% endif %}
+                                    {
+                                        type: "line",
+                                        markerSize: 5,
+                                        showInLegend: true,
+                                        name: "{{ indi.name }}",
+                                        dataPoints: [
+                                            {% for date,val in indi.indicator %}
+                                                {% if forloop.counter0 == 0 %}
+                                                    {x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                                {% else %}
+                                                    ,{x: new Date("{{ date.isoformat }}"), y:{{ val }} }
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    }
+                                {% endfor %}
+                            {% endif %}
+                            ]
+                        });
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        chart.render();
+        {% if recommendation == "BUY" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == 1 %}
+                    {% if not indicator.same_scale %}
+                        chart{{ forloop.counter0 }}.render();
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% elif recommendation == "SELL" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == -1 %}
+                    {% if not indicator.same_scale %}
+                        chart{{ forloop.counter0 }}.render();
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        }
+    </script>
+{% endblock %}
 {% block content %}
     <a href="/search" class="btn btn-primary" onclick="">Back</a>
     <br/>
     <br/>
-    <img src="data:image/png;base64,{{ ohlc_image }}"/>
+    <div align="center">
+        {% if recommendation == "BUY" %}
+            <H1> {{ stock_name }}: <span style="color: #008000">Buy</span></H1>
+        {% elif recommendation == "SELL" %}
+            <H1> {{ stock_name }}: <span style="color: #FF0000">Sell</span></H1>
+        {% else %}
+            <H1> {{ stock_name }}: <span style="color: #337AB7">Neutral</span></H1>
+        {% endif %}
+    </div>
+    <div id="plot" style="height: 500px; width: 100%;"></div>
+        {% if recommendation == "BUY" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == 1 %}
+                    {% if not indicator.same_scale %}
+                            <div id="plot{{ forloop.counter0 }}" style="height: 250px; width: 100%;"></div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% elif recommendation == "SELL" %}
+            {% for indicator in indicators %}
+                {% if indicator.signal == -1 %}
+                    {% if not indicator.same_scale %}
+                            <div id="plot{{ forloop.counter0 }}" style="height: 250px; width: 100%;"></div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 {% endblock %}

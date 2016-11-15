@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
 import json
+import math
 from matplotlib.finance import candlestick2_ohlc
 from matplotlib.finance import candlestick_ohlc
 import matplotlib.pyplot as plt
@@ -12,6 +13,8 @@ from matplotlib.dates import date2num
 import matplotlib.ticker as mticker
 from .technical_indicators import TechnicalIndicators, TechnicalAnalysis
 from .stock_data import StockData
+import numpy as np
+
 
 def index(request):
     context = {"title":"Home"}
@@ -81,8 +84,13 @@ def report(request):
             else:
                 falling_sticks.append([dates[i],[openp[i], highp[i], lowp[i], closep[i]]])
         stock_name = Security.objects.filter(id=stock_id).values_list('sec_name', flat=True)[0].replace("\n","")
+        text = stock_name+" is recommended for a \""+reco+"\" at "+str(closep[-1])+"."
+        if reco=="BUY":
+            text += " The expected profit and loss levels are "+str(closep[-1]+2.0*np.std(closep))+", "+str(closep[-1]-2.0*np.std(closep))+" respectively."
+        elif reco=="SELL":
+            text += " The expected profit and loss levels are "+str(closep[-1]-2.0*np.std(closep))+", "+str(closep[-1]+2.0*np.std(closep))+" respectively."
         context = {"chart_title":"TITLE", "rising_sticks":rising_sticks, "falling_sticks": falling_sticks, "recommendation":reco, "stock_name":stock_name\
-            , "indicators":indicators}
+            , "indicators":indicators, "text":text}
         return render(request, "StockAnalysis/report.html", context)
 
 

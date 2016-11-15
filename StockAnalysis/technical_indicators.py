@@ -252,31 +252,54 @@ class TechnicalAnalysis:
                 returns += closep[i-1] - reco_price
         return returns
 
+
     def get_indicators(self):
         n = len(self.stock_data.date_series)
         dates = self.stock_data.date_series[max(0,n-50):n]
-        sma = {"name": "Simple Moving Average", "signal":self.sma_signal[-1], "indicator":zip(dates,self.technical_indicators.sma[max(0,n-50):n]), "same_scale": True, "num_signals":1}
-        ema = {"name": "Exponential Moving Average", "signal":self.ema_signal[-1], "indicator":zip(dates,self.technical_indicators.ema[max(0,n-50):n]), "same_scale": True, "num_signals":1}
+        sma_sentences = {"buy":"The Stock Price has crossed the Simple Moving Average from below indicating that the prices would likely to go up."\
+                        , "sell":"The Stock Price has crossed the Simple Moving Average from above indicating that the prices would likely go down."}
+        ema_sentences = {"buy":"The Stock Price has crossed the Exponential Moving Average from below indicating that the prices would likely to go up."\
+                        , "sell":"The Stock Price has crossed the Exponential Moving Average from above indicating that the prices would likely go down."}
+        bollinger_sentences = {"buy":"The Stock Price has crossed the lower Bollinger Band from below indicating bullishness."\
+                            , "sell":"The Stock Price has crossed the upper Bollinger Band from above indicating bearishness."}
+        macd_sentences = {"buy":"The Moving Average Convergence Divergence Oscillator has crossed the 0 line from below into a positive territory giving a bullish signal."\
+                        ,"sell":"The Moving Average Convergence Divergence Oscillator has crossed the 0 line from above into a negative territory giving a bearish signal."}
+        rsi_sentences = {"buy":"A bullish pattern is generated as the Relative Strength Index has crossed 30 from below."\
+                    , "sell":"A bearish pattern is generated as the Relative Strength Index has crossed 70 from above."}
+        stochastic_sentences = {"buy":"Stochastic Oscillator has given a \"BUY\" signal as it has crossed 30 line from below."\
+                            , "sell":"Stochastic Oscillator has given a \"SELL\" signal as it has crossed 70 line from above."}
+        aroon_sentences = {"buy":"The Aroon Oscillator has moved above zero, indicating exhausting downward trend and beginning of an uptrend."\
+                        , "sell":"The Aroon Oscillator has moved below zero, indicating exhausting upward trend and beginning of a downtrend."}
+        cci_sentences = {"buy":"A bullish crossover is visible on the chart as the Moving Average of Commodities Channel Indicator has crossed -100 from below."\
+                    , "sell":"A bearish crossover is visible on the chart as the Moving Average of Commodities Channel Indicator has crossed 100 from above."}
+        williams_sentences = {"buy":"The Williams%R indicator has crossed -80 from below, generating a bullish signal."\
+                        , "sell":"The Williams%R indicator has crossed -20 from above, generating a bearish signal."}
+        vortex_sentences = {"buy":"The positive Vortex signal has moved above the negative Vortex signal, indicating exhausting downward trend and beginning of an uptrend."\
+                        , "sell":"The positive Vortex signal has moved below the negative Vortex signal, indicating exhausting upward trend and beginning of a downtrend."}
+        sma = {"name": "Simple Moving Average", "signal":self.sma_signal[-1], "indicator":zip(dates,self.technical_indicators.sma[max(0,n-50):n])\
+                , "same_scale": True, "num_signals":1, "sentences": sma_sentences}
+        ema = {"name": "Exponential Moving Average", "signal":self.ema_signal[-1], "indicator":zip(dates,self.technical_indicators.ema[max(0,n-50):n])\
+                    , "same_scale": True, "num_signals":1, "sentences": ema_sentences}
         bollinger = {"name": "Bollinger Bands", "signal":self.bollinger_signal[-1], \
                      "indicators":[{"name":"Bollinger Down","indicator":zip(dates,self.technical_indicators.bollinger[0][max(0,n-50):n])},\
                                    {"name":"Bollinger Up","indicator":zip(dates,self.technical_indicators.bollinger[1][max(0,n-50):n])}], \
-                     "same_scale": True, "num_signals":2}
+                     "same_scale": True, "num_signals":2, "sentences":bollinger_sentences}
         macd = {"name": "Moving Average Convergence Divergence", "signal":self.macd_signal[-1], "indicator":zip(dates,self.technical_indicators.macd[2][max(0,n-50):n]) \
-                ,"same_scale": False, "num_signals":1, "offset":[0], "has_offset":True}
+                ,"same_scale": False, "num_signals":1, "offset":[0], "has_offset":True, "sentences": macd_sentences}
         rsi = {"name": "Relative Strength Index", "signal":self.rsi_signal[-1], "indicator":zip(dates,self.technical_indicators.rsi[max(0,n-50):n]), "same_scale": False, "num_signals":1\
-               , "offset":[30,70], "has_offset":True}
+               , "offset":[30,70], "has_offset":True, "sentences":rsi_sentences}
         stochastic = {"name": "Stochastic Oscillator", "signal":self.stochastic_signal[-1], "indicator":zip(dates,self.technical_indicators.stochastic[max(0,n-50):n]), "same_scale": False, "num_signals":1\
-                      , "offset":[30,70], "has_offset":True}
+                      , "offset":[30,70], "has_offset":True, "sentences":stochastic_sentences}
         aroon = {"name": "Aroon Oscillator", "signal":self.aroon_signal[-1], "indicator":zip(dates,self.technical_indicators.aroon[max(0,n-50):n]), "same_scale": False, "num_signals":1\
-                 , "offset":[0], "has_offset":True}
+                 , "offset":[0], "has_offset":True, "sentences":aroon_sentences}
         cci = {"name": "Commodity Channel Index", "signal":self.cci_signal[-1], "indicator":zip(dates,self.technical_indicators.cci[max(0,n-50):n]), "same_scale": False, "num_signals":1\
-               , "offset":[-100,100], "has_offset":True}
+               , "offset":[-100,100], "has_offset":True, "sentences":cci_sentences}
         williams = {"name": "Williams %R", "signal":self.williams_signal[-1], "indicator":zip(dates,self.technical_indicators.williams[max(0,n-50):n]), "same_scale": False, "num_signals":1\
-                    , "offset":[-20,-80], "has_offset":True}
+                    , "offset":[-20,-80], "has_offset":True, "sentences":williams_sentences}
         vortex = {"name": "Vortex Oscillator", "signal":self.vortex_signal[-1], \
                   "indicators":[{"name": "Vortex Up", "indicator":zip(dates,self.technical_indicators.vortex[0][max(0,n-50):n])},\
                                 {"name": "Vortex Down", "indicator":zip(dates,self.technical_indicators.vortex[1][max(0,n-50):n])}],\
-                  "same_scale": False, "num_signals":2, "has_offset":False}
+                  "same_scale": False, "num_signals":2, "has_offset":False, "sentences":vortex_sentences}
         result = [sma, ema, bollinger, macd, rsi, stochastic, aroon, cci, williams, vortex]
         random.shuffle(result)
         return result

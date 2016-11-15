@@ -13,9 +13,11 @@
             axisY: {
                 includeZero:false,
                 title: "Prices",
+                labelFontSize: 15
             },
             axisX: {
                 interval:1,
+                labelFontSize: 15
             },
             toolTip: {
                 shared: true,
@@ -358,4 +360,28 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+    <br/>
+    <hr/>
+    <div align="center">
+        <h1> Report </h1>
+    </div>
+    <div style="font-size: 20px;">
+        <p>{{ text }}</p>
+        <ul >
+            {% if recommendation == "BUY" %}
+
+                {% for indicator in indicators %}
+                    {% if indicator.signal == 1 %}
+                        <li>{{ indicator.sentences.buy }}</li>
+                    {% endif %}
+                {% endfor %}
+            {% elif recommendation == "SELL" %}
+                {% for indicator in indicators %}
+                    {% if indicator.signal == -1 %}
+                        <li>{{ indicator.sentences.sell }}</li>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
 {% endblock %}

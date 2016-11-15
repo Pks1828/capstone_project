@@ -12,7 +12,6 @@
             exportEnabled: true,
             axisY: {
                 includeZero:false,
-{#                prefix: "$",#}
                 title: "Prices",
             },
             axisX: {
@@ -159,6 +158,30 @@
                         var chart{{ forloop.counter0 }} = new CanvasJS.Chart("plot{{ forloop.counter0 }}",{
                             title:{
                             },
+                            {% if indicator.has_offset %}
+                            axisY:{
+                                title: "{{ indicator.name }}",
+                                stripLines:[
+                                    {% for offset in indicator.offset %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {
+                                                value: {{ offset }},
+                                                color:"#7300AB"
+                                            }
+                                        {% else %}
+                                            ,{
+                                                value: {{ offset }},
+                                                color:"#7300AB"
+                                            }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            },
+                            {% else %}
+                                axisY: {
+                                    title: "{{ indicator.name }}"
+                                },
+                            {% endif %}
                             data:[
                             {% if indicator.num_signals == 1 %}
                                 {
@@ -212,6 +235,30 @@
                         var chart{{ forloop.counter0 }} = new CanvasJS.Chart("plot{{ forloop.counter0 }}",{
                             title:{
                             },
+                            {% if indicator.has_offset %}
+                            axisY:{
+                                title: "{{ indicator.name }}",
+                                stripLines:[
+                                    {% for offset in indicator.offset %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {
+                                                value: {{ offset }},
+                                                color:"#7300AB"
+                                            }
+                                        {% else %}
+                                            ,{
+                                                value: {{ offset }},
+                                                color:"#7300AB"
+                                            }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            },
+                            {% else %}
+                                axisY: {
+                                    title: "{{ indicator.name }}"
+                                },
+                            {% endif %}
                             data:[
                             {% if indicator.num_signals == 1 %}
                                 {

@@ -261,16 +261,22 @@ class TechnicalAnalysis:
                      "indicators":[{"name":"Bollinger Down","indicator":zip(dates,self.technical_indicators.bollinger[0][max(0,n-50):n])},\
                                    {"name":"Bollinger Up","indicator":zip(dates,self.technical_indicators.bollinger[1][max(0,n-50):n])}], \
                      "same_scale": True, "num_signals":2}
-        macd = {"name": "Moving Average Convergence Divergence", "signal":self.macd_signal[-1], "indicator":zip(dates,self.technical_indicators.macd[2][max(0,n-50):n]), "same_scale": False, "num_signals":1}
-        rsi = {"name": "Relative Strength Index", "signal":self.rsi_signal[-1], "indicator":zip(dates,self.technical_indicators.rsi[max(0,n-50):n]), "same_scale": False, "num_signals":1}
-        stochastic = {"name": "Stochastic Oscillator", "signal":self.stochastic_signal[-1], "indicator":zip(dates,self.technical_indicators.stochastic[max(0,n-50):n]), "same_scale": False, "num_signals":1}
-        aroon = {"name": "Aroon Oscillator", "signal":self.aroon_signal[-1], "indicator":zip(dates,self.technical_indicators.aroon[max(0,n-50):n]), "same_scale": False, "num_signals":1}
-        cci = {"name": "Commodity Channel Index", "signal":self.cci_signal[-1], "indicator":zip(dates,self.technical_indicators.cci[max(0,n-50):n]), "same_scale": False, "num_signals":1}
-        williams = {"name": "Williams %R", "signal":self.williams_signal[-1], "indicator":zip(dates,self.technical_indicators.williams[max(0,n-50):n]), "same_scale": False, "num_signals":1}
+        macd = {"name": "Moving Average Convergence Divergence", "signal":self.macd_signal[-1], "indicator":zip(dates,self.technical_indicators.macd[2][max(0,n-50):n]) \
+                ,"same_scale": False, "num_signals":1, "offset":[0], "has_offset":True}
+        rsi = {"name": "Relative Strength Index", "signal":self.rsi_signal[-1], "indicator":zip(dates,self.technical_indicators.rsi[max(0,n-50):n]), "same_scale": False, "num_signals":1\
+               , "offset":[30,70], "has_offset":True}
+        stochastic = {"name": "Stochastic Oscillator", "signal":self.stochastic_signal[-1], "indicator":zip(dates,self.technical_indicators.stochastic[max(0,n-50):n]), "same_scale": False, "num_signals":1\
+                      , "offset":[30,70], "has_offset":True}
+        aroon = {"name": "Aroon Oscillator", "signal":self.aroon_signal[-1], "indicator":zip(dates,self.technical_indicators.aroon[max(0,n-50):n]), "same_scale": False, "num_signals":1\
+                 , "offset":[0], "has_offset":True}
+        cci = {"name": "Commodity Channel Index", "signal":self.cci_signal[-1], "indicator":zip(dates,self.technical_indicators.cci[max(0,n-50):n]), "same_scale": False, "num_signals":1\
+               , "offset":[-100,100], "has_offset":True}
+        williams = {"name": "Williams %R", "signal":self.williams_signal[-1], "indicator":zip(dates,self.technical_indicators.williams[max(0,n-50):n]), "same_scale": False, "num_signals":1\
+                    , "offset":[-20,-80], "has_offset":True}
         vortex = {"name": "Vortex Oscillator", "signal":self.vortex_signal[-1], \
                   "indicators":[{"name": "Vortex Up", "indicator":zip(dates,self.technical_indicators.vortex[0][max(0,n-50):n])},\
                                 {"name": "Vortex Down", "indicator":zip(dates,self.technical_indicators.vortex[1][max(0,n-50):n])}],\
-                  "same_scale": False, "num_signals":2}
+                  "same_scale": False, "num_signals":2, "has_offset":False}
         result = [sma, ema, bollinger, macd, rsi, stochastic, aroon, cci, williams, vortex]
         random.shuffle(result)
         return result

@@ -1,0 +1,395 @@
+{% extends 'StockAnalysis/base.html' %}
+{% block head %}
+    {% load static %}
+    <script src="{% static "js/dataTables.min.js" %}"></script>
+    <link rel="stylesheet" href="{% static "css/dataTables.min.css" %}"/>
+    <script>
+        $(document).ready(function(){
+           $("#glossary_table").DataTable({
+           });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    {% load static %}
+    <table class="table table-bordered table-striped" id="glossary_table">
+        <thead>
+        <tr>
+            <th>Sr No</th>
+            <th>Term</th>
+            <th>Meaning</th>
+            <th>References</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>1</td>
+            <td>Stock</td>
+            <td>
+                <ul>
+                    <li>A stock is a type of security that signifies ownership in a corporation and represents a claim on part of the corporation's assets and earnings.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="http://www.investopedia.com/terms/s/stock.asp">http://www.investopedia.com/terms/s/stock.asp</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Stock Exchange</td>
+            <td>
+                <ul>
+                    <li>Organized and regulated financial market where securities (bonds, notes, shares) are bought and sold at prices governed by the forces of demand and supply.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.businessdictionary.com/definition/stock-exchange.html">http://www.businessdictionary.com/definition/stock-exchange.html</a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/Stock_exchange">https://en.wikipedia.org/wiki/Stock_exchange</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Opening Price</td>
+            <td>
+                <ul>
+                    <li>The opening price is the price at which a security first trades upon the opening of an exchange on a given trading day.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/o/openingprice.asp">http://www.investopedia.com/terms/o/openingprice.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>High Price</td>
+            <td>
+                <ul>
+                    <li>High price is the highest price at which a stock traded during the course of the day.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/t/todayshigh.asp">http://www.investopedia.com/terms/t/todayshigh.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Low Price</td>
+            <td>
+                <ul>
+                    <li>Low Price is the lowest price at which a stock trades over the course of a trading day.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/t/todayslow.asp">http://www.investopedia.com/terms/t/todayslow.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Close Price</td>
+            <td>
+                <ul>
+                    <li>The closing price represents the most up-to-date valuation of a security until trading commences again on the next trading day</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/c/closingprice.asp">http://www.investopedia.com/terms/c/closingprice.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>Technical Indicators</td>
+            <td>
+                <ul>
+                    <li>A technical indicator is a series of data points that are derived by applying a formula to the price data of a security.</li>
+                    <li>A technical indicator offers a different perspective from which to analyze the price action.</li>
+                    <li>Technical indicators look to predict the future price levels, or simply the general price direction, of a security by looking at past patterns.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/t/technicalindicator.asp">http://www.investopedia.com/terms/t/technicalindicator.asp</a></li>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:introduction_to_technical_indicators_and_oscillators">http://stockcharts.com/school/doku.php</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>Candlestick</td>
+            <td>
+                <ul>
+                    <li>A candlestick chart (also called Japanese candlestick chart) is a style of financial chart used to describe price movements of a security, derivative, or currency. Each "candlestick" typically shows one day.</li>
+                    <li>It shows the open, high, low and close price at one point. Based on whether open price is greater than the close price it is "red" or "green".</li>
+                </ul>
+                <img src="{% static "images/CandlestickBasicsChart.gif" %}"/>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="https://en.wikipedia.org/wiki/Candlestick_chart">https://en.wikipedia.org/wiki/Candlestick_chart</a></li>
+                    <li><a href="http://www.onlinetradingconcepts.com/images/candlesticks/CandlestickBasicsChart.gif">http://www.onlinetradingconcepts.com/images/candlesticks</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>Simple Moving Average</td>
+            <td>
+                <ul>
+                    <li>A simple moving average is an indicator that calculates the average price of a security over a specified number of periods.</li>
+                    <li>We get a "BUY" signal when price crosses the Simple Moving Average from below and a "SELL" signal when from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages">
+                        http://stockcharts.com/school/doku.php
+                    </a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>Exponential Moving Average</td>
+            <td>
+                <ul>
+                    <li>Exponential moving averages reduce the lag by applying more weight to recent prices. The weighting applied to the most recent price depends on the number of periods in the moving average.</li>
+                    <li>We get a "BUY" signal when price crosses the Exponential Moving Average from below and a "SELL" signal when from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:moving_averages">
+                        http://stockcharts.com/school/doku.php
+                    </a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>Moving Average Convergence Divergence</td>
+            <td>
+                <ul>
+                    <li>Moving average convergence divergence (MACD) is a trend-following momentum indicator that shows the relationship between two moving averages of prices.</li>
+                    <li>We get a "BUY" signal when MACD line crosses 0 from below and "SELL" signal when from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/m/macd.asp">http://www.investopedia.com/terms/m/macd.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>Bollinger Bands</td>
+            <td>
+                <ul>
+                    <li>Bollinger Bands consist of a center line and two price channels (bands) above and below it. The center line is an exponential moving average; the price channels are the standard deviations of the middle line.</li>
+                    <li>We get a "BUY" signal when prices cross the lower band from below and a "SELL" signal when the prices cross the above band from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/articles/technical/102201.asp">http://www.investopedia.com/articles/technical/102201.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>Relative Strength Index</td>
+            <td>
+                <ul>
+                    <li>The relative strength index (RSI) is a momentum indicator, that compares the magnitude of recent gains and losses over a specified time period to measure speed and change of price movements of a security.</li>
+                    <li>We get a "BUY" signal if RSI line crossed 30 signal line from below and a "SELL" signal if it crosses 70 signal line from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/r/rsi.asp">http://www.investopedia.com/terms/r/rsi.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>Commodity Channel Index</td>
+            <td>
+                <ul>
+                    <li>CCI measures the current price level relative to an average price level over a given period of time.</li>
+                    <li>We get a "BUY" signal if CCI crosses -100 line from below and a "SELL" signal if it crosses 100 line from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:commodity_channel_index_cci">http://stockcharts.com/school/doku.php</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>Stochastic Oscillator</td>
+            <td>
+                <ul>
+                    <li>The Stochastic Oscillator is a momentum indicator that shows the location of the close relative to the high-low range over a set number of periods</li>
+                    <li>We get a "BUY" signal if Stochastics crosses 30 line from below and a "SELL" signal if it crosses 70 line from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:stochastic_oscillator_fast_slow_and_full">http://stockcharts.com/school/doku.php</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>Vortex Oscillator</td>
+            <td>
+                <ul>
+                    <li>The Vortex Indicator consists of two oscillators that capture positive and negative trend movement.</li>
+                    <li>We get a "BUY" signal when positive oscillator crosses negative oscillator from below, "SELL" if opposite.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:vortex_indicator">http://stockcharts.com/school/doku.php</a> </li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>Williams %R</td>
+            <td>
+                <ul>
+                    <li>Williams %R, sometimes referred to as the Williams Percent Range, is a momentum indicator that measures overbought and oversold levels.</li>
+                    <li>We get a "BUY" signal when williams%r signal crosses -80 line from below and a "SELL" signal when it crosses -20 line from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/w/williamsr.asp">http://www.investopedia.com/terms/w/williamsr.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td>Aroon Oscillator</td>
+            <td>
+                <ul>
+                    <li>Aroon Oscillator is a trend following indicator which comprises of 2 signals Aroon Up and Aroon down.</li>
+                    <li>Aroon up is used to measure the strength of the uptrend, while Aroon down is used to measure the strength of the downtrend.</li>
+                    <li>We get a "BUY" signal if Aroon Oscillator crosses 0 line from below and a "SELL" signal if it crosses 0 line from above.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/a/aroonoscillator.asp">http://www.investopedia.com/terms/a/aroonoscillator.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>19</td>
+            <td>Bullish</td>
+
+            <td>
+                <ul>
+                    <li>Investors who believe that a stock price will increase over time are said to be bullish. Investors who buy calls are bullish on the underlying stock. That is, they believe that the stock price will rise and have paid for the right to purchase the stock at a specific price known as the exercise price or strike price.</li>
+                    <li>An analogy can be that bull always attacks from down to up.</li>
+                    <img src="{% static "images/bull.jpg" %}"/>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/study-guide/series-4/introduction/bullish-vs-bearish/">http://www.investopedia.com/study-guide/series-4/introduction/bullish-vs-bearish/</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>20</td>
+            <td>Bearish</td>
+            <td>
+                <ul>
+                    <li>Investors who believe that a stock price will decline are said to be bearish. The seller of a call has an obligation to sell the stock to the purchaser at a specified price and believes that the stock price will fall and is therefore bearish.</li>
+                    <li>An analogy can be that bear always attacks from up to down.</li>
+                    <img src="{% static "images/bear.jpg" %}"/>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/study-guide/series-4/introduction/bullish-vs-bearish/">http://www.investopedia.com/study-guide/series-4/introduction/bullish-vs-bearish/</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>Overbought</td>
+            <td>
+                <ul>
+                    <li>Overbought refers to a situation in which the demand for a certain asset or security unjustifiably pushes the price of that asset or underlying asset to levels that are not justified by fundamentals.</li>
+                    <li>Overbought is often a term used in technical analysis to describe a situation in which the price of a security has risen to such a degree - usually on high volume - that an oscillator has reached its upper bounds.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/o/overbought.asp">http://www.investopedia.com/terms/o/overbought.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>22</td>
+            <td>Oversold</td>
+            <td>
+                <ul>
+                    <li>Oversold is a condition in which the price of an underlying asset has fallen sharply to a level below where its true value resides.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/o/oversold.asp">http://www.investopedia.com/terms/o/oversold.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>23</td>
+            <td>Returns</td>
+            <td>
+                <ul>
+                    <li>A return is the gain or loss of a security in a particular period.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/r/return.asp">http://www.investopedia.com/terms/r/return.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>24</td>
+            <td>Back Testing</td>
+            <td>
+                <ul>
+                    <li>Backtesting is the process of testing a trading strategy on relevant historical data to ensure its viability before the trader risks any actual capital.</li>
+                    <li>A trader can simulate the trading of a strategy over an appropriate period of time and analyze the results for the levels of profitability and risk.</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><a href="http://www.investopedia.com/terms/b/backtesting.asp">http://www.investopedia.com/terms/b/backtesting.asp</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tbody>
+
+        </tbody>
+    </table>
+{% endblock %}

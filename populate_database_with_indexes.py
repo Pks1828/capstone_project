@@ -22,7 +22,7 @@ def populate_databae_with_indexes(index_name, index_file):
             conn.commit()
             q2 = "insert into constituents (`index_id`,`sec_id`) VALUES ((select id from indexes where index_name='"+index_name+"'),(select id from security where yahoo_ticker='"+ticker+"' and sec_name='"+company_name+"'))"
             cursor.execute(q2)
-            conn.commit()
+    conn.commit()
     conn.close()
 
 

@@ -16,10 +16,14 @@ def populate_initial_data(index_name, index_file):
             print "Dumping daa for: "+ticker
             f2 = open(path+ticker.replace("&","N")+".csv",'r')
             records = f2.read().split("\n")
-            for i in xrange(len(records)-2,0,-1):
+            for i in xrange(len(records)-1,0,-1):
                 ohlc = records[i].split(",")
-                cursor.execute("INSERT INTO OHLC (`sec_id`,`date`,`open`,`high`,`low`,`close`) VALUES"\
-                            + "((select id from security where yahoo_ticker='"+ticker+"' and sec_name='"+company_name+"'),'"+ohlc[0]+"',"+ohlc[1]+","+ohlc[2]+","+ohlc[3]+","+ohlc[4]+")")
+                try:
+                    q = "INSERT INTO OHLC (`sec_id`,`date`,`open`,`high`,`low`,`close`) VALUES"\
+                                + "((select id from security where yahoo_ticker='"+ticker+"' and sec_name='"+company_name+"'),'"+ohlc[0]+"',"+ohlc[1]+","+ohlc[2]+","+ohlc[3]+","+ohlc[4]+")"
+                    cursor.execute(q)
+                except:
+                    print "ERROR"
             f2.close()
         else:
             print "ERROR"

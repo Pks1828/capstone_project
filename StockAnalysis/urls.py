@@ -5,4 +5,5 @@ urlpatterns = [
     url(r'^search/', views.search, name="search"),
     url(r'^search_stocks/', views.search_stocks, name="search_stocks"),
     url(r'^report/', views.report, name="report"),
+    url(r'^glossary/', views.glossary, name="glossary"),
 ]

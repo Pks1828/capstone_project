@@ -55,7 +55,10 @@ def report(request):
             closep.append(d.close)
             ohlc.append([d.date, d.open, d.high, d.low, d.close])
             ohlc_only.append([d.open, d.high, d.low, d.close])
-        stock_data = StockData(dates, openp, highp, lowp, closep)
+        try:
+            stock_data = StockData(dates, openp, highp, lowp, closep)
+        except:
+            return render(request, "StockAnalysis/index.html", {"title":"Home", "error":"Number of datapoints are less than 200 for the analysis."})
         technical_indicators = TechnicalIndicators(stock_data)
         technical_indicators.calculate_with_defaults()
         technical_analysis = TechnicalAnalysis(technical_indicators, stock_data)

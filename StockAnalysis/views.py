@@ -6,7 +6,7 @@ import math
 from .technical_indicators import TechnicalIndicators, TechnicalAnalysis
 from .stock_data import StockData
 import numpy as np
-
+from CapstoneProject.settings import BASE_DIR
 
 def index(request):
     context = {"title":"Home"}
@@ -88,3 +88,33 @@ def report(request):
 
 def glossary(request):
     return render(request, "StockAnalysis/glossary.html")
+
+
+def performance(request):
+    file_names = ["AAPL_p.csv","KO_p.csv","GE_p.csv","HPQ_p.csv","MSFT_p.csv"];
+    context = {}
+    for file in file_names:
+        f = open(BASE_DIR+"/performance/"+file,'r')
+        records = f.read().split("\n")
+        numReco = []
+        data = []
+        for record in records:
+            if record=="":
+                continue
+            n,d = record.split(",")
+            n = int(n)
+            d = float(d)
+            numReco.append(n)
+            data.append(d)
+        if file=="AAPL_p.csv":
+            context['data1'] = zip(numReco,data)
+        elif file=="KO_p.csv":
+            context['data2'] = zip(numReco,data)
+        elif file=="GE_p.csv":
+            context['data3'] = zip(numReco,data)
+        elif file=="HPQ_p.csv":
+            context['data4'] = zip(numReco,data)
+        elif file=="MSFT_p.csv":
+            context['data5'] = zip(numReco,data)
+        f.close()
+    return render(request,'StockAnalysis/performance.html',context)

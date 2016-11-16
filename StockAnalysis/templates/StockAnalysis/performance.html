@@ -1,0 +1,241 @@
+{% extends 'StockAnalysis/base.html' %}
+
+{% block head %}
+    {% load static %}
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script>
+        window.onload = function () {
+            var chart1 = new CanvasJS.Chart("chart1",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "Apple Inc. Profit/Loss"
+                        },
+                        animationEnabled: true,
+                        axisX: {
+                            interval: 100,
+                            title: "Number of Recommendations"
+                        },
+                        axisY: {
+                            includeZero: false,
+                            title: "Profit/Loss",
+                            stripLines:[
+                                {
+                                    value: 0,
+                                    color:"#FF0000"
+                                }
+                            ]
+                        },
+                        data: [
+                            {
+                                type: "line",
+                                //lineThickness: 3,
+                                dataPoints: [
+                                    {% for numReco,value in data1 %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {x: {{ numReco }}, y: {{ value }} }
+                                        {% else %}
+                                            ,{x: {{ numReco }}, y: {{ value }} }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            }
+
+
+                        ]
+                    });
+
+            chart1.render();
+
+            var chart2 = new CanvasJS.Chart("chart2",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "The Coca Cola Company Profit/Loss"
+                        },
+                        animationEnabled: true,
+                        axisX: {
+                            interval: 100,
+                            title: "Number of Recommendations"
+                        },
+                        axisY: {
+                            includeZero: false,
+                            title: "Profit/Loss",
+                            stripLines:[
+                                {
+                                    value: 0,
+                                    color:"#FF0000"
+                                }
+                            ]
+                        },
+                        data: [
+                            {
+                                type: "line",
+                                //lineThickness: 3,
+                                dataPoints: [
+                                    {% for numReco,value in data2 %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {x: {{ numReco }}, y: {{ value }} }
+                                        {% else %}
+                                            ,{x: {{ numReco }}, y: {{ value }} }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            }
+
+
+                        ]
+                    });
+
+            chart2.render();
+
+
+            var chart3 = new CanvasJS.Chart("chart3",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "General Electric Profit/Loss"
+                        },
+                        animationEnabled: true,
+                        axisX: {
+                            interval: 100,
+                            title: "Number of Recommendations"
+                        },
+                        axisY: {
+                            includeZero: false,
+                            title: "Profit/Loss",
+                            stripLines:[
+                                {
+                                    value: 0,
+                                    color:"#FF0000"
+                                }
+                            ]
+                        },
+                        data: [
+                            {
+                                type: "line",
+                                //lineThickness: 3,
+                                dataPoints: [
+                                    {% for numReco,value in data3 %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {x: {{ numReco }}, y: {{ value }} }
+                                        {% else %}
+                                            ,{x: {{ numReco }}, y: {{ value }} }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            }
+
+
+                        ]
+                    });
+
+            chart3.render();
+
+
+            var chart4 = new CanvasJS.Chart("chart4",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "HP Inc. Profit/Loss"
+                        },
+                        animationEnabled: true,
+                        axisX: {
+                            interval: 100,
+                            title: "Number of Recommendations"
+                        },
+                        axisY: {
+                            includeZero: false,
+                            title: "Profit/Loss",
+                            stripLines:[
+                                {
+                                    value: 0,
+                                    color:"#FF0000"
+                                }
+                            ]
+                        },
+                        data: [
+                            {
+                                type: "line",
+                                //lineThickness: 3,
+                                dataPoints: [
+                                    {% for numReco,value in data4 %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {x: {{ numReco }}, y: {{ value }} }
+                                        {% else %}
+                                            ,{x: {{ numReco }}, y: {{ value }} }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            }
+
+
+                        ]
+                    });
+
+            chart4.render();
+
+
+            var chart5 = new CanvasJS.Chart("chart5",
+                    {
+                        theme: "theme2",
+                        title: {
+                            text: "Microsoft Corp. Profit/Loss"
+                        },
+                        animationEnabled: true,
+                        axisX: {
+                            interval: 100,
+                            title: "Number of Recommendations"
+                        },
+                        axisY: {
+                            includeZero: false,
+                            title: "Profit/Loss",
+                            stripLines:[
+                                {
+                                    value: 0,
+                                    color:"#FF0000"
+                                }
+                            ]
+                        },
+                        data: [
+                            {
+                                type: "line",
+                                //lineThickness: 3,
+                                dataPoints: [
+                                    {% for numReco,value in data5 %}
+                                        {% if forloop.counter0 == 0 %}
+                                            {x: {{ numReco }}, y: {{ value }} }
+                                        {% else %}
+                                            ,{x: {{ numReco }}, y: {{ value }} }
+                                        {% endif %}
+                                    {% endfor %}
+                                ]
+                            }
+
+
+                        ]
+                    });
+
+            chart5.render();
+
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div id="chart1" style="height: 400px; width: 100%;"></div>
+    <hr/>
+    <br/>
+    <div id="chart2" style="height: 400px; width: 100%;"></div>
+    <hr/>
+    <br/>
+    <div id="chart3" style="height: 400px; width: 100%;"></div>
+    <hr/>
+    <br/>
+    <div id="chart4" style="height: 400px; width: 100%;"></div>
+    <hr/>
+    <br/>
+    <div id="chart5" style="height: 400px; width: 100%;"></div>
+    <hr/>
+    <br/>
+{% endblock %}

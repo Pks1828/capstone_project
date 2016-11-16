@@ -2,6 +2,7 @@ import numpy as np
 import math
 import random
 
+
 class TechnicalIndicators:
 
     def __init__(self, stock_data):
@@ -186,6 +187,7 @@ class TechnicalAnalysis:
         self.get_williams_signal()
         self.get_vortex_signal()
 
+
     def calculate_weights(self):
         sma_returns = self.get_returns(self.sma_signal)
         ema_returns = self.get_returns(self.ema_signal)
@@ -206,12 +208,13 @@ class TechnicalAnalysis:
             self.weights.append((w-mean)/(2.0*std)+1.0)
 
     def get_returns(self, signals_in):
+        return self.get_returns_cumulative(signals_in)[-1]
+
+    def get_returns_cumulative_core(self, closep, highp, lowp, signals_in):
         returns = 0
         signals = carryover(signals_in, -1)
         i = 50
-        highp = self.stock_data.high_price
-        lowp = self.stock_data.low_price
-        closep = self.stock_data.close_price
+        ret = []
         while i<len(signals):
             if signals[i]>0:
                 reco = 1
@@ -229,19 +232,23 @@ class TechnicalAnalysis:
                 if reco>0:
                     if highp[i]>=target:
                         returns += highp[i]-target
+                        ret.append(returns)
                         reco_made = True
                         break
                     elif lowp[i]<=stoploss:
                         returns += lowp[i]-stoploss
+                        ret.append(returns)
                         reco_made = True
                         break
                 else:
                     if highp[i]>=stoploss:
                         returns += stoploss-highp[i]
+                        ret.append(returns)
                         reco_made = True
                         break
                     elif lowp[i]<=target:
                         returns += target-lowp[i]
+                        ret.append(returns)
                         reco_made = True
                         break
                 count +=1
@@ -250,7 +257,15 @@ class TechnicalAnalysis:
                 i+=1
             else:
                 returns += closep[i-1] - reco_price
-        return returns
+                ret.append(returns)
+        return ret
+
+    def get_returns_cumulative(self, signals_in):
+        signals = carryover(signals_in, -1)
+        highp = self.stock_data.high_price
+        lowp = self.stock_data.low_price
+        closep = self.stock_data.close_price
+        return self.get_returns_cumulative_core(closep, highp, lowp, signals)
 
 
     def get_indicators(self):

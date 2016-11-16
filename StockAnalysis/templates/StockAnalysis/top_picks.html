@@ -1,0 +1,52 @@
+{% extends 'StockAnalysis/base.html' %}
+{% block head %}
+    {% load static %}
+    <script src="{% static "js/dataTables.min.js" %}"></script>
+    <link rel="stylesheet" href="{% static "css/dataTables.min.css" %}"/>
+    <script>
+        $(document).ready(function(){
+           $("#top_picks_table").DataTable({
+           });
+        });
+    </script>
+    <script>
+        function submit_form(stock_id){
+            document.getElementById("select_stock").value = stock_id;
+            document.getElementById("top_picks_form").submit();
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <div align="center">
+        <h1> Top Pics of the day</h1>
+    </div>
+    <hr/>
+    <table id="top_picks_table">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Stock Name</th>
+            <th>Recommendation</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for top_pick in top_picks %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="javascript:submit_form('{{ top_pick.sec_id }}')">{{ top_pick.name }}</a></td>
+                {% if top_pick.reco == "BUY" %}
+                    <td><span style="color: #008000">{{ top_pick.reco }}</span></td>
+                {% elif top_pick.reco == "SELL" %}
+                    <td><span style="color: #FF0000">{{ top_pick.reco }}</span></td>
+                {% else %}
+                    <td><span style="color: #337AB7">{{ top_pick.reco }}</span></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form method="POST" action="/report/" id="top_picks_form">
+        {% csrf_token %}
+        <input type="hidden" name="select_stock" id="select_stock"/>
+    </form>
+{% endblock %}

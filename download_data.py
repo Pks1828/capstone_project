@@ -3,11 +3,10 @@ import os
 import urllib
 import time
 
-# http://real-chart.finance.yahoo.com/table.csv?s=RL
+
 def get_url(ticker, start_date = None, end_date = None):
     base_url = "http://real-chart.finance.yahoo.com/table.csv?s="
     return base_url+ticker
-
 
 
 def download_file(url, filepath):

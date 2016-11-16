@@ -333,6 +333,20 @@ class TechnicalAnalysis:
         score += self.weights[9]*self.vortex_signal[-1]
         return "SELL" if score<0 else ("BUY" if score>0 else "NEUTRAL")
 
+    def get_score(self):
+        score = 0
+        score += self.weights[0]*self.sma_signal[-1]
+        score += self.weights[1]*self.ema_signal[-1]
+        score += self.weights[2]*self.bollinger_signal[-1]
+        score += self.weights[3]*self.macd_signal[-1]
+        score += self.weights[4]*self.rsi_signal[-1]
+        score += self.weights[5]*self.stochastic_signal[-1]
+        score += self.weights[6]*self.aroon_signal[-1]
+        score += self.weights[7]*self.cci_signal[-1]
+        score += self.weights[8]*self.williams_signal[-1]
+        score += self.weights[9]*self.vortex_signal[-1]
+        return score
+
     def get_sma_signal(self):
         sma = self.technical_indicators.sma
         closep = self.stock_data.close_price

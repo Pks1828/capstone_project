@@ -7,6 +7,8 @@ from .technical_indicators import TechnicalIndicators, TechnicalAnalysis
 from .stock_data import StockData
 import numpy as np
 from CapstoneProject.settings import BASE_DIR
+from django.db.models import Min, Max
+
 
 def index(request):
     context = {"title":"Home"}
@@ -118,3 +120,23 @@ def performance(request):
             context['data5'] = zip(numReco,data)
         f.close()
     return render(request,'StockAnalysis/performance.html',context)
+
+
+def top_picks(request):
+    max_date = list(TopPicks.objects.aggregate(Max('date')).values())
+    if len(max_date)>0:
+        max_date = max_date[0]
+    else:
+        context = {"title":"Home", "error":"No top picks found!"}
+        return render(request,  "StockAnalysis/index.html", context)
+    data_list = TopPicks.objects.filter(date=max_date).order_by("id")
+    result = []
+    for data in data_list:
+        reco = "NEUTRAL"
+        if data.score>0:
+            reco="BUY"
+        elif data.score<0:
+            reco="SELL"
+        result.append({"sec_id":data.sec_id, "reco":reco, "name":data.sec.sec_name})
+    context = {"top_picks":result}
+    return render(request, "StockAnalysis/top_picks.html",context)

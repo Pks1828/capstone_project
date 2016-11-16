@@ -3,6 +3,9 @@
 {% block head %}
     <script>
         $(document).ready(function(){
+            $("#select_stock").selectpicker("refresh");
+            $("#select_index").selectpicker("refresh");
+
             $("#select_index").change(function(){
                 if($(this).val()==""){
                     $('#select_stock')

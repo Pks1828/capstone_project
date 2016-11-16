@@ -4,6 +4,9 @@
 {#    <script src="{% static 'js/canvasjs.min.js' %}"></script>#}
     <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script type="text/javascript">
+        function goBack(){
+            window.history.back();
+        }
         window.onload = function () {
         var chart = new CanvasJS.Chart("plot",
         {
@@ -331,7 +334,7 @@
     </script>
 {% endblock %}
 {% block content %}
-    <a href="/search" class="btn btn-primary" onclick="">Back</a>
+    <button class="btn btn-primary" onclick="goBack()">Back</button>
     <br/>
     <br/>
     <div align="center">

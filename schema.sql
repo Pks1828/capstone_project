@@ -39,3 +39,12 @@ CREATE TABLE OHLC(
   `close` FLOAT,
   CONSTRAINT fk_security_ohlc FOREIGN KEY (`sec_id`) REFERENCES security(`id`)
 );
+
+
+CREATE TABLE top_picks(
+  `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+  `date` DATETIME,
+  `sec_id` INTEGER,
+  `score` FLOAT,
+  CONSTRAINT fk_top_picks_sec FOREIGN KEY(`sec_id`) REFERENCES security(`id`)
+);

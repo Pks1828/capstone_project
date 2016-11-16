@@ -57,4 +57,30 @@ The Web application has four modules
     
 <p> Recommendation Algorithm: The algorithm works on statistical analysis of historical prices </p>
 
+<hr/>
+
+##### Stock Selection
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/1_stock_select.png)
+
+<hr/>
+##### Stock Chart
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/2_stock_chart.png)
+<hr/>
+
+##### Stock Report
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/3_stock_report.png)
+<hr/>
+
+##### Top Picks
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/4_top_picks.png)
+<hr/>
+
+##### Performance
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/5_performance.png)
+<hr/>
+
+##### Glossary
+![alt tag](https://github.com/Pks1828/capstone_project/blob/master/screenshots/6_glossary.png)
+
+<hr/>
  

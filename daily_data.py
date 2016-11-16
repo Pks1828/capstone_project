@@ -133,5 +133,5 @@ def technical_analysis():
     cursor.close()
     conn.close()
 
-# daily_download()
+daily_download()
 technical_analysis()

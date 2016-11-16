@@ -12,7 +12,7 @@ def populate_initial_data(index_name, index_file):
     f = open(index_file, 'r')
     for line in f:
         ticker = line.split("\t")[0].strip().replace("\n","")
-        company_name = line.split("\t")[1].replace("'","''").strip().replace("\n","")
+        company_name = line.split("\t")[1].strip().replace("'","''").strip().replace("\n","")
         if ticker.replace("&","N")+".csv" in files:
             print "Dumping daa for: "+ticker
             f2 = open(path+ticker.replace("&","N")+".csv",'r')

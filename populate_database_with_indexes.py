@@ -12,8 +12,8 @@ def populate_databae_with_indexes(index_name, index_file):
         conn.commit()
     f = open(index_file, 'r')
     for line in f:
-        ticker = line.split("\t")[0]
-        company_name = line.split("\t")[1].replace("'","''")
+        ticker = line.split("\t")[0].strip().replace("\n","")
+        company_name = line.split("\t")[1].strip().replace("'","''").replace("\n","")
         cursor.execute("select * from security where yahoo_ticker='"+ticker+"' and sec_name='"+company_name+"'")
         q = cursor.fetchall()
         if len(q)==0:

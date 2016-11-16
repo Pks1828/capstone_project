@@ -2,3 +2,6 @@
 .DS_STORE
 .idea/
 stock_data.zip
+stock_data/
+table.csv
+queries_ohlc.sql

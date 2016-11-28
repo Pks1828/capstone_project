@@ -38,6 +38,7 @@ def daily_download():
     d = datetime.datetime.now()
     for data in stock_data:
         sec_id = str(data[0])
+        print("SEC ID: "+sec_id)
         ticker = data[1]
         url = get_url(ticker, d.day, d.month-1, d.year, d.day, d.month, d.year)
         try:
@@ -59,11 +60,12 @@ def daily_download():
                 check_record = cursor.fetchall()
                 if check_record and len(check_record)>0:
                     break
-                q = "INSERT INTO ohlc (`date`,`open`,`high`,`low`,`close`) values ('"+date_val+"',"+openp+","+highp+","+lowp+","+closep+")"
+                q = "INSERT INTO ohlc (`sec_id`,`date`,`open`,`high`,`low`,`close`) values ("+sec_id+",'"+date_val+"',"+openp+","+highp+","+lowp+","+closep+")"
                 cursor.execute(q)
+                # print ("Inserting: '"+date_val+"',"+openp+","+highp+","+lowp+","+closep)
         except Exception as e:
-            f.close()
             print ("ERROR: "+str(e)+":"+url)
+            f.close()
         conn.commit()
         f.close()
     cursor.close()
